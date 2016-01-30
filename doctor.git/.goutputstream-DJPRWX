@@ -1,0 +1,1057 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@page trimDirectiveWhitespaces="true" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="icon" href="indimedi_icon.jpg" type="image/x-icon" sizes="16x16" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Indimedi | Doctor</title>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/style.css"/>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/menu_styles.css"/>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/slider.css"/>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/multiple-select.css"/>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/pikaday.css"/>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery.multiple.select.js"></script>
+<%-- <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/datepickr.js"></script> --%>
+<!--- tab menu Js start------->
+<!-- for calender -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery.min.js"></script>
+<%-- <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery-latest.min.js"></script>
+  --%>
+<!-- <script type='text/javascript'	src='http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js?ver=1.6'></script>
+ -->
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script src="${pageContext.request.contextPath}/resources/js/modernizr.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/tabmenu.js"></script>
+<!--<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/hide.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/hideid.js"></script>-->
+<script src="${pageContext.request.contextPath}/resources/js/pikaday.js"></script>
+<script type="text/javascript">
+function charge(value)
+{
+	if(value=="yes")
+		{
+		
+	var charge=	document.getElementById("chargeduty");
+		charge.disabled=false;
+		}
+	else{
+		var charge=	document.getElementById("chargeduty");
+		charge.disabled=true;
+	}
+		
+}
+
+</script>
+<script type="text/javascript">
+function cancelRedirection()
+{
+	document.location.href='doctorhome';
+}
+</script>
+
+<script type="text/javascript">
+ 
+$(document).ready(function() {
+ 
+    //Default Action
+ 
+    $(".tab_content").hide(); //Hide all content
+    $("ul.tabs li:first").addClass("active").show(); //Activate first tab
+    $(".tab_content:first").show(); //Show first tab content
+     
+    //On Click Event
+    $("ul.tabs li").click(function() {
+        $("ul.tabs li").removeClass("active"); //Remove any "active" class
+        $(this).addClass("active"); //Add "active" class to selected tab
+        $(".tab_content").hide(); //Hide all tab content
+        var activeTab = $(this).find("a").attr("href"); //Find the rel attribute value to identify the active tab + content
+        $(activeTab).fadeIn(); //Fade in the active content
+        return false;
+    });
+ 
+});
+</script>
+<script type="text/javascript">
+
+$().ready(function(){
+
+	 $("#stateList").change(function(){
+		 var url="<c:url value="/getcity/"/>"+ $("#stateList option:selected").val();
+		  $.ajax({
+		mimeType:"application/json",
+		   type:"POST",
+		   url:url,
+		   success:function(data) {
+			   
+		    $('#cityList').empty();
+		    
+		    if(data!="")
+		    {
+		    	$.each(data,function(index,item)
+		    	{
+		  		    $("#cityList").append("<option value='" + index + "'>" + item + "</option>");
+		  		});
+		    }
+		    else{
+		    	alert("Unable to retrive cities for selected state " + $("#stateList option:selected").val());
+				
+		    }
+		  
+		   },
+		   error:function(event){
+			
+    	    alert("Unable to retrive cities for selected state " + $("#stateList option:selected").val());
+			
+		   }
+	  });})  
+	  });
+</script>
+<script type="text/javascript">
+$().ready(function(){
+	if($('#citySeleted').val()!="")
+   {
+	 var url="<c:url value="/getcity/"/>"+ $("#stateList option:selected").val();
+	  $.ajax({
+	mimeType:"application/json",
+	   type:"POST",
+	   url:url,
+	   success:function(data) {   
+	    $('#cityList').empty();
+	    
+	    if(data!="")
+	    {
+	    	$.each(data,function(index,item)
+			 {
+	    		if($('#citySeleted').val()==index)
+	    		{
+			  		    $("#cityList").append("<option value='" + index + "' selected='selected'>" + item + "</option>");
+	    		}
+	    		else
+	    			{
+	    			    $("#cityList").append("<option value='" + index + "'>" + item + "</option>");
+	    			}
+			 });
+	    }
+	    else
+	    {
+	    	alert("1Unable to retrive cities for selected state " + $("#stateList option:selected").val());
+			
+	    }
+	  
+	   },
+	   error:function(event){
+		
+	    alert("2Unable to retrive cities for selected state " + $("#stateList option:selected").val());
+		
+	   }
+ });}})  
+</script>
+<script type="text/javascript">
+
+$().ready(function(){
+
+	 $("#state").change(function(){
+		 var url="<c:url value="/getcity/"/>"+ $("#state option:selected").val();
+		  $.ajax({
+		mimeType:"application/json",
+		   type:"POST",
+		   url:url,
+		   success:function(data) {
+			   
+		    $('#city').empty();
+		    
+		    if(data!="")
+		    {
+		    	$.each(data,function(index,item)
+		    	{
+		  		    $("#city").append("<option value='" + item + "'>" + item + "</option>");
+		  		});
+		    }
+		    else{
+		    	alert("Unable to retrive cities for selected state " + $("#state option:selected").val());
+				
+		    }
+		  
+		   },
+		   error:function(event){
+			
+    	    alert("Unable to retrive cities for selected state " + $("#state option:selected").val());
+			
+		   }
+	  });})  
+	  });
+</script>
+<script type="text/javascript">
+ $(document).ready(function() {
+    //Default Action
+    $(".tab_content").hide(); //Hide all content
+    $("ul.tabs li:first").addClass("active").show(); //Activate first tab
+    $(".tab_content:first").show(); //Show first tab content
+     
+    //On Click Event
+    $("ul.tabs li").click(function() {
+        $("ul.tabs li").removeClass("active"); //Remove any "active" class
+        $(this).addClass("active"); //Add "active" class to selected tab
+        $(".tab_content").hide(); //Hide all tab content
+        var activeTab = $(this).find("a").attr("href"); //Find the rel attribute value to identify the active tab + content
+        $(activeTab).fadeIn(); //Fade in the active content
+        return false;
+    });
+});
+ </script>
+<script type="text/javascript">
+$(document).ready(function(){
+	 $("#spList").change(function(){
+		 var url="<c:url value="/specialitylist/"/>"+ $("#spList option:selected").val();
+		  $.ajax({
+		mimeType:"appliaction/json",
+		   type:"GET",
+		   url:url,
+		   success:function(data) {
+		    $('#subList').empty();
+		    
+		    if(data!=""){
+		    	  $(data).each(function(index, item){
+		  		    $("#subList").append("<option value='" + item[0] + "'>" + item[1] + "</option>");
+		  		   	});
+		    }
+		    else{
+		    	alert("Unable to retrive cities for selected state " + $("#spList option:selected").val());
+				
+		    }
+		  
+		   },
+		   error:function(event){
+			
+   	    alert("Unable1 to retrive cities for selected state " + $("#spList option:selected").val());
+			
+		   }
+	  });})  });
+</script>
+<script type="text/javascript">
+$(document).ready(function()
+	{
+	//alert($("#spSelected").val());
+	 if($("#spSelected").val()!="")
+	{
+		 var url="<c:url value="/specialitylistselected/"/>"+ $("#spList option:selected").val();
+		 //alert(url);
+		  $.ajax({
+		mimeType:"appliaction/json",
+		   type:"GET",
+		   url:url,
+		   success:function(data) {
+		    $('#subList').empty();
+		    
+		    if(data!=""){
+		    	  $(data).each(function(index, item){
+		    		  if($('#spSeleted').val()==item.id)
+		    	{
+		  		    $("#subList").append("<option value='" + item[0] + "' selected='selected'>" + item[1] + "</option>");
+		    	}
+		    		  else
+		    		{
+		    			  $("#subList").append("<option value='" + item[0] + "'>" + item[1] + "</option>");
+		    	    }
+		  		   	});
+		    }
+		    else{
+		    	alert("Unable to retrive cities for selected state " + $("#spList option:selected").val());
+				
+		    }
+		  
+		   },
+		   error:function(event){
+			
+   	    alert("Unable1 to retrive cities for selected state " + $("#spList option:selected").val());
+			
+		   }
+	  });}});
+</script>
+
+
+<script type="text/javascript">
+function checkAlphabetic(temp)
+{
+	var re = /^([a-zA-Z ])+$/;
+	if(re.test(temp))
+	{
+		return true;
+	}
+	else
+	{
+		return false;	
+	}
+}
+function checkNumber(temp)
+{
+	var re = /^([0-9])+$/;
+	if(re.test(temp))
+	{
+		return true;
+	}
+	else
+	{
+		return false;	
+	}
+}
+function personaldetail_valid() {
+
+	var Firstname = document.getElementById('FirstName');
+	var Middlename = document.getElementById('MiddleName');
+	var LastName = document.getElementById('LastName');
+	var Address1 = document.getElementById('Address1');
+	var ContactNumber = document.getElementById('ContactNumber');
+	var Pincode = document.getElementById('Pincode');
+	var dob = document.getElementById('dob');
+
+	/* FirstName Validation */
+	if (Firstname.value == "") {
+		//alert("Please Enter First Name");
+		document.getElementById('FirstName').placeholder = "Please Enter First Name";
+		document.updatePresonalDetail.FirstName.focus();
+		return false;
+	} else if ((Firstname.value.length < 2)
+			|| (Firstname.value.length > 30)) {
+		//alert("lenth <2 >30");
+		document.getElementById('FirstName').value = "";
+		document.getElementById('FirstName').placeholder = "First Name allowed from 2 to 30 characters";
+		document.updatePresonalDetail.FirstName.focus();
+		return false;
+	} else if (checkAlphabetic(Firstname.value) == false) {
+		//alert("onl alph");
+		document.getElementById('FirstName').value = "";
+		document.getElementById('FirstName').placeholder = "Only alphabets are allowed for First Name";
+		document.updatePresonalDetail.FirstName.focus();
+		return false;
+	}
+
+	/* MiddleName Validation */
+	if (checkAlphabetic(Middlename.value) == false
+			&& Middlename.value.length > 0) {
+		//alert("lent >0");
+		document.getElementById('MiddleName').value = "";
+		document.getElementById('MiddleName').placeholder = "Only alphabets are allowed for middle Name";
+		document.updatePresonalDetail.MiddleName.focus();
+		return false;
+	} else if (Middlename.value.length > 30) {
+		//alert("mid <30");
+		document.getElementById('MiddleName').value = "";
+		document.getElementById('MiddleName').placeholder = "Middle Name allowed upto 30 characters";
+		document.updatePresonalDetail.MiddleName.focus();
+		return false;
+	}
+
+	/* LastName Validation */
+	if (LastName.value == "") {
+		//alert("enter lname");
+		document.getElementById('LastName').value = "";
+		document.getElementById('LastName').placeholder = "Please Enter Last Name";
+		document.updatePresonalDetail.LastName.focus();
+		return false;
+	} else if ((LastName.value.length < 2) || (LastName.value.length > 30)) {
+		//alert("lenth <2");
+		document.getElementById('LastName').value = "";
+		document.getElementById('LastName').placeholder = "Last Name allowed from 2 to 30 characters";
+		document.updatePresonalDetail.LastName.focus();
+		return false;
+	} else if (checkAlphabetic(LastName.value) == false) {
+		//alert("only alph");
+		document.getElementById('LastName').value = "";
+		document.getElementById('LastName').placeholder = "Only alphabets are allowed for Last Name";
+		document.updatePresonalDetail.LastName.focus();
+		return false;
+	}
+
+	/* Address1 Validation */
+	 if (Address1.value.length < 5) {
+		//alert("add lenth <5");
+		document.getElementById('Address1').value = "";
+		document.getElementById('Address1').placeholder = "Address not allowed less then 5";
+		document.updatePresonalDetail.Address1.focus();
+		return false;
+	}
+    else if (Pincode.value.length < 6) {
+		//alert(Pincode.value.length);
+		document.getElementById('Pincode').value = "";
+		document.getElementById('Pincode').placeholder = "Only 6 number pincode are allowed";
+		document.updatePresonalDetail.Pincode.focus();
+		return false;
+	}
+	/* DOB Validation */
+	//alert(dob.value)
+	document.drprflupdate.submit();
+	
+}
+</script>
+<script type="text/javascript">
+function clinic_valid()
+{
+		var clinic_nm=document.getElementById('clinicName');
+		var clinic_add=document.getElementById('address');
+		var clinic_pin=document.getElementById('pin');
+		var clinic_country=document.getElementById('country');
+		var clinic_charge=document.getElementById('charges');
+		
+		/* clinic */
+		if(clinic_nm.value=="")
+		{
+			//alert("not null");
+			document.getElementById('clinicName').value = "";
+			document.getElementById('clinicName').placeholder = "Enter name";
+			document.clinicform.address.focus();
+			return false;
+		}
+		else if(checkAlphabetic(clinic_nm.value) == false)
+		{
+			//alert("Only Alph");
+			document.getElementById('clinicName').value = "";
+			document.getElementById('clinicName').placeholder = "Only alphabets are allowed";
+			document.clinicform.address.focus();
+			return false;
+		}
+		else if ((clinic_nm.value.length < 2) || (clinic_nm.value.length > 30))
+		{
+			//alert("lenth");
+			document.getElementById('clinicName').value = "";
+			document.getElementById('clinicName').placeholder = "Name allowed from 2 to 30 characters";
+			document.clinicform.address.focus();
+			return false;
+		}
+		
+		/* Address */
+		if(clinic_add.value=="")
+		{
+			//alert("not null");
+			document.getElementById('address').value = "";
+			document.getElementById('address').placeholder = "Must require";
+			document.clinicform.state.focus();
+			return false;
+		}
+		
+		else if (clinic_add.value.length < 5)
+		{
+			//alert("lenth");
+			document.getElementById('address').value = "";
+			document.getElementById('address').placeholder = "Address allowed above 5 characters";
+			document.clinicform.state.focus();
+			return false;
+		}
+		
+		/* Pincode Validation */
+		if (clinic_pin.value == '') {
+			//alert("enter pinc");
+			document.getElementById('pin').value = "";
+			document.getElementById('pin').placeholder = "Please Enter Pincode";
+			document.clinicform.country.focus();
+			return false;
+		} else if (clinic_pin.value != '' && clinic_pin.value.length < 6) {
+			//alert(Pincode.value.length);
+			document.getElementById('pin').value = "";
+			document.getElementById('pin').placeholder = "Only 6 number pincode are allowed";
+			document.clinicform.country.focus();
+			return false;
+		} /* else if (checkNumber(clinic_pin) == false && clinic_pin.value.length > 0) 
+		{
+			//alert("enter valid");
+			document.getElementById('pin').value = "";
+			document.getElementById('pin').placeholder = "enter valid pincode";
+			document.clinicform.country.focus();
+			return false;
+		} */
+		
+		/* country */
+		if(clinic_country=='')
+		{
+			//alert("not null");
+			document.getElementById('country').value = "";
+			document.getElementById('country').placeholder = "Must required";
+			document.clinicform.charges.focus();
+			return false;
+		}
+		else if(checkAlphabetic(clinic_country.value) == false)
+		{
+			//alert("Only Alph");
+			document.getElementById('country').value = "";
+			document.getElementById('country').placeholder = "Only alphabetic allowed";
+			document.clinicform.charges.focus();
+			return false;
+		}
+		else if ((clinic_country.value.length < 2) || (clinic_country.value.length > 30))
+		{
+			//alert("lenth");
+			document.getElementById('country').value = "";
+			document.getElementById('country').placeholder = "Must enter above 2 character";
+			document.clinicform.charges.focus();
+			return false;
+		}
+		/* charges */
+		if(clinic_charge.value=="")
+		{
+			//alert("require");
+			document.getElementById('charges').value = "";
+			document.getElementById('charges').placeholder = "Must required";
+			document.clinicform.Pincode.focus();
+			return false;
+		}
+		/* else if(clinic_charge.value.length > 0)
+		{
+			//alert("only num allow");
+			document.getElementById('charges').value = "";
+			document.getElementById('charges').placeholder = "Only numbers allowed";
+			document.clinicform.Pincode.focus();
+			return false;
+		} */
+		//document.clinicform.submit();
+		
+		ajaxclinic();
+		return true;
+		
+}
+
+</script>
+<script type="text/javascript">
+
+function drprofessinal_valid()
+{
+	var MCI_NO=document.getElementById('MCI_no');
+	
+	if(MCI_NO.value=="")
+	{
+		//alert("Must require");
+		document.getElementById('MCI_no').value = "";
+		document.getElementById('MCI_no').placeholder = "Must required";
+		return false;
+	}
+	document.drprofessinal.submit();
+	return true;
+}
+</script>
+
+
+<script type="text/javascript">
+function edcation_valid()
+{
+	var degree=document.getElementById('degree');
+	var uni_nm=document.getElementById('university');
+	
+	if(degree.value=='')
+	{
+		//alert("Must required");
+		document.getElementById('degree').value = "";
+		document.getElementById('degree').placeholder = "Must required";
+		return false;
+	}
+	else if(checkAlphabetic(degree.value) == false)
+	{
+//		alert("only alpha");
+		document.getElementById('degree').value = "";
+		document.getElementById('degree').placeholder = "Only alphabetic allowed";
+		return false;
+	}
+	
+	if(uni_nm.value=='')
+	{
+		//alert("must requ.");
+		document.getElementById('university').value = "";
+		document.getElementById('university').placeholder = "Must required";
+		return false;
+	}
+	else if(checkAlphabetic(uni_nm.value) == false)
+	{
+	//	alert("only alhpa");
+		document.getElementById('university').value = "";
+		document.getElementById('university').placeholder = "Only alphabetic allowed";
+		return false;
+	}
+	ajaxdegree();
+	return true;
+}
+</script>
+
+
+
+
+
+<script type="text/javascript">
+function ajaxdegree()
+{
+	
+
+	
+	var url="<c:url value="/savedegree/"/>"
+	
+	$.ajax(
+			{
+				type: "post",
+				url: url,
+				cache: false,
+				data: 'degreename='+$("#degree").val() + "&universityname="+$("#university").val(),
+				success:function(response)
+				{
+					//alert(response);
+					if(response!="")
+					{
+						$(response)
+				    }
+				},
+				error: function()
+				{
+					alert("Error in adding");
+				}
+			});
+	
+	
+	var table=document.getElementById("doctoreducation");
+	var row = table.insertRow(table.rows.count);
+
+	// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+	var cell1 = row.insertCell(0);
+	var cell2 = row.insertCell(1);
+	
+	
+	cell1.innerHTML = document.getElementById("degree").value;
+	cell2.innerHTML =  document.getElementById("university").value;
+	
+	document.getElementById("degree").value="";
+	 document.getElementById("university").value="";
+	
+	}
+
+
+
+</script>
+<script type="text/javascript">
+function ajaxclinic()
+{
+	
+	var url="<c:url value="/saveclinic/"/>"
+	//alert($("#pin").val());
+	$.ajax(
+			{
+				type: "post",
+				url: url,
+				cache: false,
+				data: 'clinicName='+$("#clinicName").val() + "&address="+$("#address").val()+ "&city="+$("#city").val() + "&state="+$("#state").val() + "&pincode="+$("#pin").val() + "&charges="+$("#charges").val() +"&country="+$("#country").val(),
+				success:function(response)
+				{
+				//	alert(response);
+					if(response!="")
+					{
+						$(response)
+				    }
+				},
+				error: function()
+				{
+					alert("Error in adding");
+				}
+			});
+	
+	var table=document.getElementById("clinictable");
+	// Create an empty <tr> element and add it to the 1st position of the table:
+	var row = table.insertRow(table.rows.count);
+
+	// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+	var cell1 = row.insertCell(0);
+	var cell2 = row.insertCell(1);
+	var cell3 = row.insertCell(2);
+	var cell4 = row.insertCell(3);
+	var cell5 = row.insertCell(4);
+	var cell6 = row.insertCell(5);
+	var cell7 = row.insertCell(6);
+
+	// Add some text to the new cells:
+	cell1.innerHTML = document.getElementById("clinicName").value;
+	cell2.innerHTML =  document.getElementById("address").value;
+	cell3.innerHTML =  document.getElementById("city").value;
+	cell4.innerHTML =  document.getElementById("state").value;
+	cell5.innerHTML =  document.getElementById("country").value;
+	cell6.innerHTML =  document.getElementById("pin").value;
+	cell7.innerHTML =  document.getElementById("charges").value;
+	
+	 document.getElementById("clinicName").value="";
+	 document.getElementById("address").value="";
+	 document.getElementById("city").value="";
+		 document.getElementById("state").value="";
+			 document.getElementById("country").value="";
+				 document.getElementById("pin").value="";
+					 document.getElementById("charges").value="";
+					 
+	 
+	
+	
+	
+}
+</script>
+<script>
+
+$(document).ready(function () {  
+
+$(".dropdown dt a").click(function () {
+          $(".dropdown dd ul").slideToggle('fast');
+});
+
+      $(".dropdown dd ul li a").on('click', function () {
+          $(".dropdown dd ul").hide();
+      });
+
+      function getSelectedValue(id) {
+           return $("#" + id).find("dt a span.value").html();
+      }
+
+      $(document).bind('click', function (e) {
+          var $clicked = $(e.target);
+          if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
+      });
+
+
+      $('.mutliSelect input[type="checkbox"]').on('click', function () {
+        
+          var title = $(this).closest('.mutliSelect').find('input[type="checkbox"]').val(),
+              title = $(this).val() + ",";
+        
+          if ($(this).is(':checked')) {
+              var html = '<span title="' + title + '">' + title + '</span>';
+              $('.multiSel').append(html);
+              $(".hida").hide();
+          } 
+          else {
+              $('span[title="' + title + '"]').remove();
+              var ret = $(".hida");
+              $('.dropdown dt a').append(ret);
+              
+          }
+      });});
+</script>
+
+<!--- tab menu Js End------->
+<!--- menu Js start------->
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/menu_script.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/modernizr.custom.63321.js"></script>
+<!--- menu Js End------->
+
+</head>
+<body>
+<%@include file="HeaderNew2.jsp" %>
+<!--- Middle Start Here -->
+<div id="middle_section">
+  <div id="contain_block">
+    <div class="tabbing_left">
+      <div class="profileBlock"> <span class="profile_pic"><a href="#0" class="cd-popup-trigger">
+        <c:if test="${doctor_info.getPhotoUrl()==null}"> <img src="${pageContext.request.contextPath}/resources/images/Icon-User.png" alt="User" title="User" longdesc="#" /> </c:if>
+        <c:if test="${doctor_info.getPhotoUrl()!=null }"> <img src="../images/doctor/Photo/Photo${doctor_info.getDoctorId().getId() }.jpg" alt="User" title="User" longdesc="#" /> </c:if>
+        </a></span>
+        <div class="cd-popup" role="alert">
+          <div class="cd-popup-container">
+            <form action="profilePic?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data" method="post">
+              <p>
+                <c:if test="${doctor_info.getPhotoUrl()==null}"> <img src="${pageContext.request.contextPath}/resources/images/Icon-User.png" alt="User" title="User" longdesc="#" /> </c:if>
+                <c:if test="${doctor_info.getPhotoUrl()!=null }"> <img src="../images/doctor/Photo/Photo${doctor_info.getDoctorId().getId() }.jpg" alt="User" title="User" longdesc="#" /> </c:if>
+              </p>
+              <span class="upload_area">
+              <label for="file" class="upload_label">Select New picture</label>
+              <input type="file" name="file" accept="image/*" class="upload_input">
+              </span> <span class="upload_button_block">
+              <input type="submit" class="upload_button" value="Submit">
+              <input type="cancel" class="upload_button" value="Cancel" onclick="cancelRedirection();">
+              </span> <a href="#0" class="cd-popup-close img-replace">&nbsp;</a>
+            </form>
+          </div>
+          <!-- cd-popup-container --> 
+        </div>
+        <h2>${doctor_info.getDoctorId().getFirstName()}  ${doctor_info.getDoctorId().getLastName() }</h2>
+        <h3>MOB :${doctor_info.getDoctorId().getMobile() }</h3>
+        <h3>${doctor_info.getDoctorId().getEmail() }</h3>
+      </div>
+      <div class="tabcontents">
+        <div class="container">
+          <ul class="tabs">
+            <li><a href="#tab1" id="actived" class="doctor_a">Personal Details</a></li>
+            <li><a href="#tab2" class="doctor_a">Clinic Details</a></li>
+            <li><a href="#tab3" class="doctor_a">Professional Details</a></li>
+            <li><a href="#tab4" class="doctor_a">Educational Details</a></li>
+          </ul>
+          <div class="tab_container">
+            <div id="tab1" class="tab_content">
+              <div class="presonal_block">
+                <form:form action="submitdoctorprofile"  modelAttribute="doctor_info" method="post"> 
+                  <span class="presonal_block_span01">
+                  <label class="tab_label_ps" for="firstname">First Name</label>
+                  <form:input path="doctorId.firstName" type="text" id="FirstName" placeholder="First Name" onchange="personaldetail_valid()" class="span_input_ps" value="${objdoctor.getFirstName()}"  />
+                  </span> 
+                  <span class="presonal_block_span">
+                  <label class="tab_label_ps" for="middlename">Middle Name</label>
+                  <form:input path="doctorId.middleName" type="text" id="MiddleName" placeholder="Middle Name" onchange="personaldetail_valid()" class="span_input_ps" value="${objdoctor.getMiddleName()}"/>
+                  </span> 
+                  <span class="presonal_block_span01">
+                  <label class="tab_label_ps" for="lastname">Last Name</label>
+                  <form:input path="doctorId.lastName" type="text" placeholder="Last Name" id="LastName" onchange="personaldetail_valid()" class="span_input_ps" value="${objdoctor.getLastName()}"/>
+                  </span> 
+                  <span class="presonal_block_span">
+                  <label class="tab_label_ps" for="state">State</label>
+                  <form:select  path="state.Id"  id="stateList"  class="tab_select">
+                    <c:forEach items="${stateList}" var="my">
+                      <c:if test="${doctor_info.state.id==my.id }">
+                        <option value="${my.id}" selected="selected" label="${my.stateName}">${my.stateName}</option>
+                      </c:if>
+                      <c:if test="${doctor_info.state.id!=my.id }">
+                        <option value="${my.id}"  label="${my.stateName}">${my.stateName}</option>
+                      </c:if>
+                    </c:forEach>
+                  </form:select>
+                  </span>
+                  <span class="presonal_block_span01">
+                  <label class="tab_label_ps" for="Address">Address1</label>
+                  <form:input path="address1" type="text" id="Address1" onchange="personaldetail_valid()" placeholder="Address1" class="span_input_ps" value="${doctor_info.getAddress1()}"/>
+                  </span>
+                  <input type="hidden" name="citySeleted" id="citySeleted" value="${doctor_info.city.id}">                   
+                  <span class="presonal_block_span">
+
+                  <label class="tab_label_ps" for="city">City</label>
+                  <form:select  path="city.id"  id="cityList" class="tab_select"> </form:select>
+                  </span> 
+                  <span class="presonal_block_span01">
+                  <label class="tab_label_ps" for="Address">Address2</label>
+                  <form:input path="address2" type="text" placeholder="Address2" class="span_input_ps" value="${doctor_info.getAddress2()}" />
+                  </span>
+                  <span class="presonal_block_span">
+                  <label class="tab_label_ps" for="Pincode">Pincode</label>
+                  <form:input path="pincode" type="text" id="Pincode" placeholder="Pincode" onchange="personaldetail_valid()" class="span_input_ps" value="${doctor_info.getPincode()}"/>
+                  </span>
+                  <span class="presonal_block_span01">
+                  <label class="tab_label_ps" for="dob2">DOB</label>
+                  <input path="dob" type="text" placeholder="Date Of Birth" name="dob" onchange="personaldetail_valid()" class="span_input_ps" id="datepicker1" value="${doctor_info.getDob()}"/>
+                  </span>
+                  <span class="presonal_block_span">
+                  <label class="tab_label_ps" for="mobilenumber" style="width:37%;" >Mobile Number</label>
+                  <form:input path="doctorId.mobile" id="ContactNumber" type="text" placeholder="Mobile Number" class="span_input_ps" disabled="true" style="width:58%;" value="${objdoctor.getMobile()}" />
+                  </span> 
+                  <span class="presonal_block_span presonal_block_span01">
+                  <label class="tab_label_ps" for="preexitinghealthissued">Gender </label>
+                  <form:radiobutton path="gender" value="Male"/>
+                  Male
+                  <form:radiobutton path="gender" value="Female"/>
+                  Female 
+                  </span>
+                   
+                   
+                   
+<!--	          <span class="presonal_block_span">
+                  	<label class="tab_label_ps" for="Pincode">Email</label>
+                  	<form:input path="doctorId.email" type="text" placeholder="E-mail" class="span_input_ps" disabled="true" value="${objdoctor.getEmail()}"/>
+                  </span>-->
+                   <!--<ul class="tabs">
+                        <li><a href="#tab2">next</a></li>
+                      </ul>-->
+                  
+                  <!--<div class="tab_button">
+                    <input type="submit" class=" buttonL" value="Update" name="Submit">
+                    <input type="button" class=" buttonL" value="Cancel" name="Submit">
+                  </div>-->
+                  <div class="tab_button">
+                      <input type="submit" onclick="personaldetail_valid()" class=" buttonL" value="Update" name="Submit">
+                      <input type="button" class=" buttonL" value="Cancel" name="Submit" onclick="cancelRedirection();">
+                    </div> 
+                </form:form>
+              </div>
+            </div>
+            <div id="tab2" class="tab_content">
+              <fieldset>
+                <form name="clinicform" method="post">
+                  <span>
+                  <label class="tab_label02" for="name">Clinic Name</label>
+                  <input type="text" class="tab_input" placeholder="Name" onchange="clinic_valid()" name="clinicName" id="clinicName"/>
+                  <input type="text" class="span_input_ps" style="width:210px"  placeholder="Address" name="address" id="address">
+                  </span> 
+                  <span class="presonal_block_span01">
+                  <label class="tab_label_ps" for="state">State</label>
+                  <select  name="state"  id="state" class="tab_select">
+                    <c:forEach items="${stateList}" var="my">
+                      <option label="${my.stateName}" value="${my.id}">${my.stateName}</option>
+                    </c:forEach>
+                  </select>
+                  </span> 
+                  <span class="presonal_block_span">
+                  <label class="tab_label_ps" for="city">City</label>
+                  <select name="city"  id="city" class="tab_select">
+                  </select>
+                  </span> 
+                  <span class="presonal_block_span01">
+                  <label class="tab_label_ps" for="Pincode">Pincode</label>
+                  <input name="pincode" type="text" id="pin" onchange="clinic_valid()"  placeholder="Pincode" class="span_input_ps"/>
+                  </span> 
+                  <span class="presonal_block_span">
+                  <label class="tab_label_ps" for="Pincode">Country</label>
+                  <input name="country" type="text" id="country" onchange="clinic_valid()"  placeholder="Country" class="span_input_ps"/>
+                  </span> 
+                  <span class="presonal_block_span01">
+                  <label class="tab_label_ps" for="charges">Charges</label>
+                  <input name="charges" type="text" id="charges" placeholder="Charges" onchange="clinic_valid()" class="span_input_ps"/>
+                  </span>
+                  <div class="tab_button" style="margin-bottom:15px ! important;">
+                    <input type="button" class=" buttonL" value="Add Clinic" onclick="clinic_valid();">
+                    <input type="button" class=" buttonL" value="Cancel" name="Submit" onclick="cancelRedirection();">
+                  </div>
+                </form></br></br>
+
+                <table width="100%" align="center" cellpadding="0" cellspacing="0" border="1" id="clinictable" bordercolor="#727377" style="margin-top:10px;">
+                  <tr>
+                    <td height="30" align="left" valign="middle" bgcolor="#727377" style="font-size:14px; color:#fff;">Clinic Name</td>
+                    <td height="30" align="left" valign="middle" bgcolor="#727377" style="font-size:14px; color:#fff;">Address</td>
+                    <td height="30" align="left" valign="middle" bgcolor="#727377" style="font-size:14px; color:#fff;">City</td>
+                    <td height="30" align="left" valign="middle" bgcolor="#727377" style="font-size:14px; color:#fff;">State</td>
+                    <td height="30" align="left" valign="middle" bgcolor="#727377" style="font-size:14px; color:#fff;">Country</td>
+                    <td height="30" align="left" valign="middle" bgcolor="#727377" style="font-size:14px; color:#fff;">Pincode</td>
+                    <td height="30" align="left" valign="middle" bgcolor="#727377" style="font-size:13px; color:#fff;">Charges</td>
+                  </tr>
+                   <c:forEach items="${doctor_info.doctorClinicsList}" var="my">
+                  <tr>
+                    <td align="left" valign="middle" style="font-size:13px; color:#727377;">${my.clinicName}</td>
+                    <td align="left" valign="middle" style="font-size:13px; color:#727377;">${my.address}</td>
+                    <td align="left" valign="middle" style="font-size:13px; color:#727377;">${my.city}</td>
+                    <td align="left" valign="middle" style="font-size:13px; color:#727377;">${my.state}</td>
+                    <td align="left" valign="middle" style="font-size:13px; color:#727377;">${my.country}</td>
+                    <td align="left" valign="middle" style="font-size:13px; color:#727377;">${my.pincode}</td>
+                    <td align="left" valign="middle" style="font-size:13px; color:#727377;">${my.charges}</td>
+                  </tr>
+                  </c:forEach>
+                </table>
+              </fieldset>
+            </div>
+            <div id="tab3" class="tab_content">
+              <form:form action="doctorprofessinal" modelAttribute="doctor_info" method="post"> 
+              	<span>
+                <label class="tab_label_new" for="preexitinghealthissued">Preferred Mode of Communication</label>
+                <div class="tab_check tab_margin" style="width: 11.5%;float:left;">
+                  <form:checkbox path="modeOfCommunications" class="tab_check_input" value="email"/>
+                  <label for="yes" class="tab_label02" style="width: 48%;margin-top: -8%;">E-mail</label>
+                </div>
+                <div class="tab_check">
+                  <form:checkbox path="modeOfCommunications" class="tab_check_input" value="sms"/>
+                  <label for="yes">SMS</label>
+                </div>
+                <div class="tab_check">
+                  <form:checkbox path="modeOfCommunications" class="tab_check_input" value="voice"/>
+                  <label for="voice">Voice</label>
+                </div>
+                </span> 
+                <span class="presonal_block_span">
+                <label class="tab_label_ps" for="mci">MCI Reg. No</label>
+                <form:input id="MCI_no" onblur="drprofessinal_valid()" path="medicalRegistrationNumber" class="span_input_ps"/>
+                </span> 
+                <span class="presonal_block_span01" style="visibility:hidden;">
+                <label class="tab_label_ps" for="mci">MCI Reg. No</label>
+                <form:input id="MCI_no" onblur="drprofessinal_valid()" path="medicalRegistrationNumber" class="span_input_ps"/>
+                </span> 
+				<span class="presonal_block_span">
+                <label class="tab_label" for="speciality">Speciality</label>
+                <form:select  path="specialityId.id"  id="spList" class="tab_select" required="required">
+                  <c:forEach items="${specialityList}" var="my">
+                    <c:if test="${doctor_info.specialityId.id==my.id }">
+                      <option value="${my.id}" selected="selected" label="${my.name}">${my.name}</option>
+                    </c:if>
+                    <c:if test="${doctor_info.specialityId.id!=my.id}">
+                      <option value="${my.id}"  label="${my.name}">${my.name}</option>
+                    </c:if>
+                  </c:forEach>
+                </form:select>
+                </span> 
+                <span class="presonal_block_span01">
+                <input type="hidden" name="spSeleted" id="spSeleted" value="${doctor_info.specialityId.id}">
+                <label class="tab_label_ps" for="subspeciality">SubSpeciality</label>
+                <form:select  path="subSpecialityId.id"  id="subList" class="tab_select" required="required"> </form:select>
+                </span> 
+                <span>
+                <label class="tab_label_new" for="preexitinghealthissued">Willing to Schedule Appointment</label>
+                <div class="tab_check tab_margin">
+                  <form:radiobutton path="willingToSchedule" value="yes" class="tab_check_input" />
+                  <label for="yes">Yes</label>
+                </div>
+                <div class="tab_check">
+                  <form:radiobutton path="willingToSchedule" value="no" class="tab_check_input" />
+                  <label for="no">No</label>
+                </div>
+                </span> 
+                <span>
+                <label class="tab_label_new" for="preexitinghealthissued">Willing To Perform Duties of Doctor on Call</label>
+                <div class="tab_check tab_margin">
+                  <form:radiobutton path="dutiesOnCall"  onchange="charge(this.value)" class="tab_check_input" value="yes"/>
+                  <label for="yes">Yes</label>
+                </div>
+                <div class="tab_check">
+                  <form:radiobutton path="dutiesOnCall"  onchange="charge(this.value)" class="tab_check_input" value="no"/>
+                  <label for="no">No</label>
+                </div>
+                </span>
+                <span>
+                <label for="charges" class="tab_label02"> Charges </label>
+                <form:input path="dutiesOnCallCharges" class="tab_input" />
+                </span>
+                <div class="tab_button">
+                  <input type="submit" class=" buttonL" value="Update" name="Submit">
+                  <input type="button" class=" buttonL" value="Cancel" name="Submit" onclick="cancelRedirection();">
+                </div>
+              </form:form>
+            </div>
+            <div id="tab4" class="tab_content">
+              <span>
+              <label class="tab_label" for="name">Degree Details</label>
+              <input type="text" onblur="edcation_valid()" class="tab_input" placeholder="Degree Name" id="degree" name="degreeName"/>
+              <input type="text" onblur="edcation_valid()" class="span_input_ps" style="width:210px" id="university" placeholder="University Name" name="universityName">
+              </span>
+              
+               <table width="100%" align="center" cellpadding="0" cellspacing="0" border="1" bordercolor="#727377"  id="doctoreducation">
+                  <tr>
+                    <td height="30" align="left" valign="middle" bgcolor="#727377" style="font-size:14px; color:#fff;">Degree Name</td>
+                    <td height="30" align="left" valign="middle" bgcolor="#727377" style="font-size:14px; color:#fff;">University Name</td>
+                  </tr>
+                  <c:forEach items="${doctor_info.educationDetail}" var="obj">
+                  <tr>
+                    <td align="left" valign="middle" style="font-size:13px; color:#727377;">${obj.degree}</td>
+                    <td align="left" valign="middle" style="font-size:13px; color:#727377;">${obj.university}</td>
+                  </tr>
+                </c:forEach>
+              </table>
+              <div class="tab_button">
+                <input type="button" class=" buttonL" value="Add Degree" onclick="edcation_valid();">
+                <input type="button" class=" buttonL" value="Cancel" name="Submit" onclick="cancelRedirection();">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </form>
+    <div class="tabbing_right flexcroll">
+      <h2>Promotional Contents</h2>
+      <div class="promotionalblock">
+        <p>Indimedi Solutions Pvt. Ltd is the first ever introduced venture that combines I.T and Health Care Sector into one. It is an initiative to give Patients, Doctors, Pharmacies, Pathology laboratories, Hospitals and Health insurance companies "ONE" common platform which makes it amazingly easy for them to manage their work processes collectively. It is unique in its ways of managing these work processes, as it addresses the biggest challenge faced in Heath Care today; lack of inter-connectivity and coordination.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--- Middle End Here --> 
+
+<!--- Footer Start Here -->
+<%@include file="FooterNew.jsp" %>
+<script>    
+     var picker = new Pikaday(
+    {
+        field: document.getElementById('datepicker1'),
+        firstDay: 1,
+        minDate: new Date('1900-01-01'),
+        maxDate: new Date('2014-12-31'),
+        yearRange: [1900,2014]
+    });
+    </script>
+<!--- Footer End Here --> 
+<!--- Page Wrapper  End  Here --> 
+<!--=========footer testimonial start=============--> 
+<script type="application/javascript" src="${pageContext.request.contextPath}/resources/js/testimonial.js"></script> 
+<!--=========footer testimonial End=============-->
+</body>
+</html>
